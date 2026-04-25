@@ -79,7 +79,8 @@ The process map (`Bolt Socks Order-to-Cash Process Map - Scully J .pdf`) is orga
 | Area | Finding |
 |------|---------|
 | **Invoice timing — critical** | The process map shows invoicing is triggered *after* delivery confirmation. This means the payment clock doesn't start until after pick, pack, ship, and delivery — a structural delay that directly impacts cash flow |
-| Credit assessment | `Request for Quotation` appears in only ~2% of cases (95 of 5,047) — most orders skip formal credit review, suggesting the vast majority are existing customers |
+| Credit assessment (hidden process) | The new customer credit assessment described in the process map generates no event log activity — it is a hidden process not captured in the ERP system. Its duration and outcomes are invisible to this analysis |
+| Request for Quotation | `Request for Quotation` (95 cases) appears in the event log but was not discussed during staff interviews and is not represented in the process map. It is a separate, unrelated process — its purpose and ownership require further investigation |
 | Customer pick-up | 600 cases involve `Customer pick-up` — a fulfillment variant entirely absent from the described process |
 | Undocumented activities | `Purchase Order Created` (499), `Delivery Changed` (399), and `Confirmation of Service` (200) appear in the data but have no equivalent in the process map |
 | Collections gap | No collections activity exists in the event log despite the described process including it — ~515 cases end without `Payment Received` with no recorded follow-up |
