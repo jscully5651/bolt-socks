@@ -19,6 +19,7 @@ Bolt Socks is experiencing cash flow challenges stemming from delays in their or
 |------|-------------|
 | `process_mining.ipynb` | Google Colab notebook — process discovery and timing analysis using PM4PY |
 | `order_to_cash.csv` | Event log — 33,615 events across 5,047 orders (cases) |
+| `Bolt Socks Order-to-Cash Process Map - Scully J .pdf` | Lucidchart swim lane diagram of the O2C process as described by staff |
 
 ## Data
 
@@ -49,29 +50,41 @@ The event log (`order_to_cash.csv`) contains three columns:
 
 ## Described Process (As-Interviewed)
 
-The following reflects the O2C process as described by Bolt Socks staff:
+The process map (`Bolt Socks Order-to-Cash Process Map - Scully J .pdf`) is organized into four swim lanes:
+
+| Swim Lane | Steps |
+|-----------|-------|
+| **Customer** | Places order (online or phone/sales rep) |
+| **Sales & Order Management** | Existing customer check → Set Credit Terms → Prepare Sales Order → Send Invoice to Customer |
+| **New Customer Credit Processing** | Submit Credit Assessment Request → 3rd Party Reviews Credit History → Receive & Review Assessment Results |
+| **Warehouse & Shipping** | Pick & Pack Order (24-hr target) → Ship via US Express or other carrier → Confirm Delivery |
+| **Finance & Collections** | Payment Received in Window? → Yes: End / No: Initiate Collections Process → End |
+
+**Intended sequence:**
 
 1. Customer places an order (online or via sales representative)
-2. Credit assessment:
+2. Credit assessment decision:
    - *Existing customers*: credit terms set immediately from prior history
    - *New customers*: third-party credit assessment requested, reviewed, and returned before terms are finalized
-3. Sales prepares and transmits a formal sales order to the warehouse
+3. Sales prepares a formal sales order and transmits it to the warehouse
 4. Warehouse picks and packs the order (target: 24-hour turnaround)
 5. Order shipped via US Express or available carrier
 6. Delivery to customer confirmed
-7. Sales issues an invoice
+7. **Sales issues an invoice** (triggered by delivery confirmation)
 8. Customer pays within agreed terms → process closes
-9. If payment not received on time → Finance initiates collections
+9. If payment not received on time → Finance initiates collections → process closes
 
 ## Key Observations (Described vs. Actual)
 
 | Area | Finding |
 |------|---------|
-| Credit assessment | RFQ activity appears in only ~2% of cases — most orders skip formal credit review |
-| Customer pick-up | 600 cases use pick-up instead of shipping — not reflected in the described process |
-| Undocumented activities | `Purchase Order Created`, `Delivery Changed`, and `Confirmation of Service` appear in the data but are absent from the process description |
-| Collections | No collections activity exists in the event log — ~515 cases end without `Payment Received` |
-| Invoicing gap | ~310 orders never had an invoice created; ~205 invoiced orders were never paid |
+| **Invoice timing — critical** | The process map shows invoicing is triggered *after* delivery confirmation. This means the payment clock doesn't start until after pick, pack, ship, and delivery — a structural delay that directly impacts cash flow |
+| Credit assessment | `Request for Quotation` appears in only ~2% of cases (95 of 5,047) — most orders skip formal credit review, suggesting the vast majority are existing customers |
+| Customer pick-up | 600 cases involve `Customer pick-up` — a fulfillment variant entirely absent from the described process |
+| Undocumented activities | `Purchase Order Created` (499), `Delivery Changed` (399), and `Confirmation of Service` (200) appear in the data but have no equivalent in the process map |
+| Collections gap | No collections activity exists in the event log despite the described process including it — ~515 cases end without `Payment Received` with no recorded follow-up |
+| Invoicing gap | ~310 orders with a `Sales Order Created` never had an `Invoice Created`; ~205 invoiced orders were never paid |
+| Activity mapping | The event log activity `Confirmed Delivery Date` (5,043 occurrences) does not clearly correspond to any single step in the described process — it may represent scheduling rather than actual delivery confirmation |
 
 ## Notebook Structure
 
